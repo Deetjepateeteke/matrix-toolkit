@@ -139,3 +139,17 @@ def test_matrix_multiplication(A, B, C):
 def test_invalid_multiplication(A, B):
     with raises(DimensionError):
         C = A * B
+
+
+@pytest.mark.parametrize(("A", "B"), [
+    (
+        Matrix([[-2, 5, 1], [1, 0, 4]]),
+        Matrix([[-2, 1], [5, 0], [1, 4]])
+    )
+])
+def test_transpose(A, B):
+    assert A.transpose() == B
+    assert B.transpose() == A
+
+    assert A.transpose().transpose() == A
+    assert B.transpose().transpose() == B

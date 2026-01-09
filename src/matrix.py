@@ -136,6 +136,21 @@ class Matrix:
     def __repr__(self):
         return f"{type(self).__name__}(dims={self.dimensions}, {self.data})"
 
+    def transpose(self):
+        """
+        Returns the transposed of a matrix. The transposed
+        will be of dimensions n x m.
+
+        returns:
+            Matrix: the transposed
+        """
+        n = self.dimensions[1]
+        m = self.dimensions[0]
+
+        return Matrix([
+            [self.data[j][i] for j in range(m)] for i in range(n)
+        ])
+
     @property
     def data(self):
         return self._data
