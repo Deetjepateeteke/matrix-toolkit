@@ -1,0 +1,17 @@
+[project]
+name = "matrix-toolkit"
+version = "0.1.0"
+description = "A python package that contains a 2-dimensional matrix datatype."
+authors = [
+    { name = "Deetjepateeteke" }
+]
+license = { text = "MIT" }
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "flake8"
+]
