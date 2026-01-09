@@ -25,12 +25,12 @@ __all__ = ["Matrix"]
 class Matrix:
     """ A 2-dimensional matrix datatype. """
 
-    __slots__ = ["data", "dimensions"]
+    __slots__ = ["_data", "_dimensions"]
 
     def __init__(self, data: list[list[float]]):
         if _valid_dimensions(data):
-            self.data = data
-            self.dimensions = (len(self.data), len(self.data[0]))
+            self._data = data
+            self._dimensions = (len(data), len(data[0]))
 
     def __add__(self, other):
         if not isinstance(other, Matrix):
@@ -135,3 +135,19 @@ class Matrix:
 
     def __repr__(self):
         return f"{type(self).__name__}(dims={self.dimensions}, {self.data})"
+
+    @property
+    def data(self):
+        return self._data
+
+    @data.setter
+    def data(self, _):
+        raise AttributeError("Matrix.data cannot be modified")
+
+    @property
+    def dimensions(self):
+        return self._dimensions
+
+    @dimensions.setter
+    def dimensions(self, _):
+        raise AttributeError("Matrix.dimensions cannot be modified")
