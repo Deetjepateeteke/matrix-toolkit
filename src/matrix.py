@@ -134,4 +134,4 @@ class Matrix:
         return not self.__eq__(other)
 
     def __repr__(self):
-        return f"<{self.__qualname__}<{str(self.data)}>"
+        return f"{type(self).__name__}(dims={self.dimensions}, {self.data})"

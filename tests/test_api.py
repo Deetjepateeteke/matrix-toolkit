@@ -58,7 +58,21 @@ def test_invalid_elements(data):
 ])
 def test_adding(A, B, C):
     assert A + B == C
+    assert B + A == C
 
+
+@pytest.mark.parametrize(("A", "B"), [
+    (
+        Matrix([[1, 2, 3]]),
+        Matrix([[1], [2], [3]])
+    )
+])
+def test_invalid_adding(A, B):
+    with raises(DimensionError):
+        C = A + B
+
+    with raises(DimensionError):
+        C = B + A
 
 
 @pytest.mark.parametrize(("A", "B", "C"), [
@@ -76,6 +90,21 @@ def test_adding(A, B, C):
 ])
 def test_subtracting(A, B, C):
     assert A - B == C
+    assert A - C == B
+
+
+@pytest.mark.parametrize(("A", "B"), [
+    (
+        Matrix([[1, 2, 3]]),
+        Matrix([[1], [2], [3]])
+    )
+])
+def test_invalid_subtracting(A, B):
+    with raises(DimensionError):
+        C = A - B
+
+    with raises(DimensionError):
+        C = B - A
 
 
 @pytest.mark.parametrize(("n", "A", "B"), [
@@ -87,6 +116,7 @@ def test_subtracting(A, B, C):
 ])
 def test_scalar_multiplication(n, A, B):
     assert n * A == B
+    assert A * n == B
 
 
 @pytest.mark.parametrize(("A", "B", "C"), [
