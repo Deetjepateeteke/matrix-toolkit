@@ -7,7 +7,7 @@ This file contains the matrix-class that supports doing mathematical
 operations on a 2-dimensional matrix.
 
 Classes:
-    Matrix: The matrix datatype.
+    Matrix: The 2-dimensional matrix datatype.
 
 Author: Deetjepateeteke <https://github.com/Deetjepateeteke>
 """
@@ -31,6 +31,50 @@ class Matrix:
         if _valid_dimensions(data):
             self._data = data
             self._dimensions = (len(data), len(data[0]))
+
+    @classmethod
+    def identity(cls, n: int) -> Matrix:
+        """
+        Create a n x n matrix that is filled with 1s along the main diagonal.
+
+        Args:
+            n (int): The dimensions (n, n) of the new matrix.
+
+        Returns:
+            Matrix: an n x n identity matrix
+        """
+        return Matrix([
+            [1 if i == j else 0 for j in range(n)] for i in range(n)
+        ])
+
+    @classmethod
+    def full(cls, dimensions: tuple[int], value: Union[int, float]) -> Matrix:
+        """
+        Create a m x n matrix that is filled with the given value.
+
+        Args:
+            dimensions (tuple[int]): The dimensions (m x n) of the new matrix.
+            value (Union[int, float]): The value that the matrix should be filled with.
+
+        Returns:
+            Matrix: The filled matrix.
+        """
+        return Matrix([
+            [value for j in range(dimensions[1])] for i in range(dimensions[0])
+        ])
+
+    @classmethod
+    def zeros(cls, dimensions: tuple[int]) -> Matrix:
+        """
+        Create a m x n matrix that is filled with zeros.
+
+        Args:
+            dimensions (tuple[int]): The dimensions (m x n) of the new matrix.
+
+        Returns:
+            Matrix: The m x n zero matrix.
+        """
+        return cls.full(dimensions, 0)
 
     def __add__(self, other):
         if not isinstance(other, Matrix):
@@ -132,6 +176,9 @@ class Matrix:
 
     def __ne__(self, other):
         return not self.__eq__(other)
+
+    def __str__(self):
+        return self.data
 
     def __repr__(self):
         return f"{type(self).__name__}(dims={self.dimensions}, {self.data})"

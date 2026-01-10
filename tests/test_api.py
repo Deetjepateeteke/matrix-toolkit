@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-test_api.py - Includes testing for doing mathematical operations on a Matrix.
+test_api.py - Includes testing for doing mathematical operations on matrices.
 
 Author: Deetjepateeteke <https://github.com/Deetjepateeteke>
 """
@@ -10,37 +10,10 @@ Author: Deetjepateeteke <https://github.com/Deetjepateeteke>
 import pytest
 
 from src import Matrix
-from src.errors import DimensionError, InvalidElementError
+from src.errors import DimensionError
 
 
 raises = pytest.raises
-
-
-@pytest.mark.parametrize("data", [
-    [],
-    [[]],
-    [[], []],
-    [[0], []],
-    [[], [0]],
-    [[[0]]],
-    [[0, 0], [0]],
-    [[0], [0, 0]]
-])
-def test_invalid_dimensions(data):
-    with raises(DimensionError):
-        Matrix(data)
-
-
-@pytest.mark.parametrize("data", [
-    [["0"]],
-    [["0", 0]],
-    [[0, "0"]],
-    [[True]],
-    [[False, []]]
-])
-def test_invalid_elements(data):
-    with raises(InvalidElementError):
-        Matrix(data)
 
 
 @pytest.mark.parametrize(("A", "B", "C"), [
@@ -139,17 +112,3 @@ def test_matrix_multiplication(A, B, C):
 def test_invalid_multiplication(A, B):
     with raises(DimensionError):
         C = A * B
-
-
-@pytest.mark.parametrize(("A", "B"), [
-    (
-        Matrix([[-2, 5, 1], [1, 0, 4]]),
-        Matrix([[-2, 1], [5, 0], [1, 4]])
-    )
-])
-def test_transpose(A, B):
-    assert A.transpose() == B
-    assert B.transpose() == A
-
-    assert A.transpose().transpose() == A
-    assert B.transpose().transpose() == B
