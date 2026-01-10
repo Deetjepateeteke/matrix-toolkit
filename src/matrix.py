@@ -16,8 +16,8 @@ from __future__ import annotations
 
 from typing import NoReturn, Union
 
-from .utils import _valid_dimensions
-from .errors import DimensionError, InvalidOperationError
+from .utils import _is_square, _valid_dimensions
+from .errors import DimensionError, InvalidOperationError, NotSquareError
 
 __all__ = ["Matrix"]
 
@@ -90,6 +90,20 @@ class Matrix:
             [j1 + j2 for j1, j2 in zip(i1, i2)] for i1, i2 in zip(self.data, other.data)
         ])
 
+    def __sub__(self, other):
+        if not isinstance(other, Matrix):
+            raise InvalidOperationError(f"you can only subtract matrices, not {type(other).__name__}")
+
+        if self.dimensions != other.dimensions:
+            raise DimensionError(
+                "to subtract matrices, they should be of the same dimensions, "
+                f"got {self.dimensions} and {other.dimensions}"
+            )
+
+        return Matrix([
+            [j1 - j2 for j1, j2 in zip(i1, i2)] for i1, i2 in zip(self.data, other.data)
+        ])
+
     def __mul__(self, other):
         """ Scalar multiplication """
         if not isinstance(other, Matrix):
@@ -142,20 +156,28 @@ class Matrix:
 
     def __rfloordiv__(self, other) -> NoReturn:
         raise NotImplementedError
+    
+    def __pow__(self, n: int):
+        if not isinstance(n, int):
+            raise InvalidOperationError(f"a matrix' power must be an integer, got {n!r}")
 
-    def __sub__(self, other):
-        if not isinstance(other, Matrix):
-            raise InvalidOperationError(f"you can only subtract matrices, not {type(other).__name__}")
+        # Check for a square matrix
+        if not _is_square(self.dimensions):
+            raise NotSquareError(f"to raise a matrix to a power, the matrix must be a squared matrix, got {self.dimensions}")
+        
+        # Negative powers
+        if n < 0:
+            raise NotImplementedError
+        
+        # Return the identity matrix when n is 0
+        elif n == 0:
+            return self.identity(self.dimensions[0])
+        
+        result = Matrix(self.data)  # make a copy of the matrix
+        for _ in range(n-1):
+            result *= self
 
-        if self.dimensions != other.dimensions:
-            raise DimensionError(
-                "to subtract matrices, they should be of the same dimensions, "
-                f"got {self.dimensions} and {other.dimensions}"
-            )
-
-        return Matrix([
-            [j1 - j2 for j1, j2 in zip(i1, i2)] for i1, i2 in zip(self.data, other.data)
-        ])
+        return result
 
     def __eq__(self, other) -> bool:
         if not isinstance(other, Matrix):
@@ -178,7 +200,7 @@ class Matrix:
         return not self.__eq__(other)
 
     def __str__(self):
-        return self.data
+        return str(self.data)
 
     def __repr__(self):
         return f"{type(self).__name__}(dims={self.dimensions}, {self.data})"
@@ -186,10 +208,10 @@ class Matrix:
     def transpose(self):
         """
         Returns the transposed of a matrix. The transposed
-        will be of dimensions n x m.
+         matrix will be of dimensions n x m.
 
         returns:
-            Matrix: the transposed
+            Matrix: the transposed matrix
         """
         n = self.dimensions[1]
         m = self.dimensions[0]

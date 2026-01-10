@@ -10,7 +10,7 @@ Author: Deetjepateeteke <https://github.com/Deetjepateeteke>
 import pytest
 
 from src import Matrix
-from src.errors import DimensionError
+from src.errors import DimensionError, NotSquareError
 
 
 raises = pytest.raises
@@ -112,3 +112,22 @@ def test_matrix_multiplication(A, B, C):
 def test_invalid_multiplication(A, B):
     with raises(DimensionError):
         C = A * B
+
+
+@pytest.mark.parametrize(("A", "n", "B"), [
+    (Matrix([[2, 4], [3, -1]]), 0, Matrix([[1, 0], [0, 1]])),
+    (Matrix([[2, 4], [3, -1]]), 1, Matrix([[2, 4], [3, -1]])),
+    (Matrix([[2, 4], [3, -1]]), 2, Matrix([[16, 4], [3, 13]])),
+    (Matrix([[2, 4], [3, -1]]), 3, Matrix([[44, 60], [45, -1]]))
+])
+def test_pow(A, n, B):
+    assert A ** n == B
+
+
+@pytest.mark.parametrize("A", [
+    Matrix([[2, 1]]),
+    Matrix([[5, 1], [0, 4], [3, 5]])
+])
+def test_invalid_pow(A):
+    with raises(NotSquareError):
+        B = A ** 2

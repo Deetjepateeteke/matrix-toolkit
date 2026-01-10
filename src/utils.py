@@ -10,7 +10,7 @@ from typing import Union, NoReturn
 
 from .errors import DimensionError, InvalidElementError
 
-__all__ = ["_valid_dimensions"]
+__all__ = ["_is_square", "_valid_dimensions"]
 
 
 def _valid_dimensions(matrix: list[list[float]]) -> Union[bool, NoReturn]:
@@ -44,3 +44,8 @@ def _valid_dimensions(matrix: list[list[float]]) -> Union[bool, NoReturn]:
             raise DimensionError("there is ambiguity in the given matrix' dimesions")
 
     return True
+
+
+def _is_square(dimensions: tuple[int]) -> bool:
+    # Check if the matrix is a square matrix
+    return dimensions[0] == dimensions[1]
