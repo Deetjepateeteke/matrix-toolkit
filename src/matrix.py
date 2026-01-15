@@ -244,7 +244,7 @@ class Matrix:
         raise AttributeError("Matrix.data cannot be modified")
 
     @property
-    def dimensions(self) -> tuple(int):
+    def dimensions(self) -> tuple[int]:
         return self._dimensions
 
     @dimensions.setter
