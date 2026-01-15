@@ -10,7 +10,7 @@ Author: Deetjepateeteke <https://github.com/Deetjepateeteke>
 import pytest
 
 from src import Matrix
-from src.errors import DimensionError, NotSquareError
+from src.errors import DimensionError, InvalidOperationError, NotSquareError
 
 
 raises = pytest.raises
@@ -100,7 +100,7 @@ def test_scalar_multiplication(n, A, B):
     )
 ])
 def test_matrix_multiplication(A, B, C):
-    assert A * B == C
+    assert A @ B == C
 
 
 @pytest.mark.parametrize(("A", "B"), [
@@ -111,6 +111,15 @@ def test_matrix_multiplication(A, B, C):
 ])
 def test_invalid_multiplication(A, B):
     with raises(DimensionError):
+        C = A @ B
+
+    with raises(InvalidOperationError):
+        C = 2 @ A
+
+    with raises(InvalidOperationError):
+        C = A @ 2
+
+    with raises(InvalidOperationError):
         C = A * B
 
 

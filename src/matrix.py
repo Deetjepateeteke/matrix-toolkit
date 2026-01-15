@@ -14,7 +14,7 @@ Author: Deetjepateeteke <https://github.com/Deetjepateeteke>
 
 from __future__ import annotations
 
-from typing import NoReturn, Union
+from typing import Any, NoReturn, Union
 
 from .utils import _is_square, _valid_dimensions
 from .errors import DimensionError, InvalidOperationError, NotSquareError
@@ -76,7 +76,7 @@ class Matrix:
         """
         return cls.full(dimensions, 0)
 
-    def __add__(self, other):
+    def __add__(self, other: Matrix) -> Matrix:
         if not isinstance(other, Matrix):
             raise InvalidOperationError(f"you can only add matrices, not {type(other).__name__}")
 
@@ -90,7 +90,7 @@ class Matrix:
             [j1 + j2 for j1, j2 in zip(i1, i2)] for i1, i2 in zip(self.data, other.data)
         ])
 
-    def __sub__(self, other):
+    def __sub__(self, other: Matrix) -> Matrix:
         if not isinstance(other, Matrix):
             raise InvalidOperationError(f"you can only subtract matrices, not {type(other).__name__}")
 
@@ -104,14 +104,29 @@ class Matrix:
             [j1 - j2 for j1, j2 in zip(i1, i2)] for i1, i2 in zip(self.data, other.data)
         ])
 
-    def __mul__(self, other):
+    def __mul__(self, other: Union[int, float]) -> Matrix:
         """ Scalar multiplication """
-        if not isinstance(other, Matrix):
-            return Matrix([
-                [other * j for j in i] for i in self.data
-            ])
 
+        if isinstance(other, Matrix):
+            raise InvalidOperationError("use the @-operator to use matrix multiplication")
+
+        return Matrix([
+            [other * j for j in i] for i in self.data
+        ])
+        
+
+    def __rmul__(self, other: Union[int, float]) -> Matrix:
+        return self.__mul__(other)
+    
+    def __matmul__(self, other: Matrix) -> Matrix:
         """ Matrix multiplication """
+
+        if not isinstance(other, Matrix):
+            raise InvalidOperationError(
+                "when multiplying matrices, two matrices are needed,"
+                "got {type(self).__name__} and {type(other).__name__}"
+            )
+
         if self.dimensions[1] != other.dimensions[0]:
             raise DimensionError(
                 "to multiplate matrices, they should be of dimensions m x n and n x p, "
@@ -135,11 +150,11 @@ class Matrix:
                 result[i].append(sum(e1 * e2 for e1, e2 in zip(own_row, other_column)))
 
         return Matrix(result)
+    
+    def __rmatmul__(self, other: Matrix) -> Matrix:
+        return self.__matmul__(other)
 
-    def __rmul__(self, other):
-        return self.__mul__(other)
-
-    def __truediv__(self, other) -> Union[Matrix, NoReturn]:
+    def __truediv__(self, other: Union[int, float]) -> Union[Matrix, NoReturn]:
         # Scalar division
         if isinstance(other, (int, float)):
             return Matrix([
@@ -157,7 +172,7 @@ class Matrix:
     def __rfloordiv__(self, other) -> NoReturn:
         raise NotImplementedError
     
-    def __pow__(self, n: int):
+    def __pow__(self, n: int) -> Matrix:
         if not isinstance(n, int):
             raise InvalidOperationError(f"a matrix' power must be an integer, got {n!r}")
 
@@ -175,11 +190,11 @@ class Matrix:
         
         result = Matrix(self.data)  # make a copy of the matrix
         for _ in range(n-1):
-            result *= self
+            result @= self
 
         return result
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Any) -> bool:
         if not isinstance(other, Matrix):
             return False
 
@@ -196,16 +211,16 @@ class Matrix:
 
         return True
 
-    def __ne__(self, other):
+    def __ne__(self, other: Any) -> bool:
         return not self.__eq__(other)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.data)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"{type(self).__name__}(dims={self.dimensions}, {self.data})"
 
-    def transpose(self):
+    def transpose(self) -> Matrix:
         """
         Returns the transposed of a matrix. The transposed
          matrix will be of dimensions n x m.
@@ -221,17 +236,17 @@ class Matrix:
         ])
 
     @property
-    def data(self):
+    def data(self) -> list[list[Union[int, float]]]:
         return self._data
 
     @data.setter
-    def data(self, _):
+    def data(self, _) -> NoReturn:
         raise AttributeError("Matrix.data cannot be modified")
 
     @property
-    def dimensions(self):
+    def dimensions(self) -> tuple(int):
         return self._dimensions
 
     @dimensions.setter
-    def dimensions(self, _):
+    def dimensions(self, _) -> NoReturn:
         raise AttributeError("Matrix.dimensions cannot be modified")

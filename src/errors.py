@@ -23,7 +23,7 @@ __all__ = [
     "NotSquareError"
 ]
 
-class MatrixError(Exception): ...  # The master matrixlib exception
+class MatrixError(Exception): ...  # The master matrixtoolkit exception
 
 class DimensionError(MatrixError):
     def __init__(self, msg: str):
