@@ -48,13 +48,13 @@ class Matrix:
         ])
 
     @classmethod
-    def full(cls, dimensions: tuple[int], value: Union[int, float]) -> Matrix:
+    def full(cls, value: Union[int, float], dimensions: tuple[int]) -> Matrix:
         """
         Create a m x n matrix that is filled with the given value.
 
         Args:
-            dimensions (tuple[int]): The dimensions (m x n) of the new matrix.
             value (Union[int, float]): The value that the matrix should be filled with.
+            dimensions (tuple[int]): The dimensions (m x n) of the new matrix.
 
         Returns:
             Matrix: The filled matrix.
@@ -74,7 +74,7 @@ class Matrix:
         Returns:
             Matrix: The m x n zero matrix.
         """
-        return cls.full(dimensions, 0)
+        return cls.full(0, dimensions)
 
     def __add__(self, other: Matrix) -> Matrix:
         if not isinstance(other, Matrix):
@@ -113,11 +113,10 @@ class Matrix:
         return Matrix([
             [other * j for j in i] for i in self.data
         ])
-        
 
     def __rmul__(self, other: Union[int, float]) -> Matrix:
         return self.__mul__(other)
-    
+
     def __matmul__(self, other: Matrix) -> Matrix:
         """ Matrix multiplication """
 
@@ -150,7 +149,7 @@ class Matrix:
                 result[i].append(sum(e1 * e2 for e1, e2 in zip(own_row, other_column)))
 
         return Matrix(result)
-    
+
     def __rmatmul__(self, other: Matrix) -> Matrix:
         return self.__matmul__(other)
 
@@ -171,7 +170,7 @@ class Matrix:
 
     def __rfloordiv__(self, other) -> NoReturn:
         raise NotImplementedError
-    
+
     def __pow__(self, n: int) -> Matrix:
         if not isinstance(n, int):
             raise InvalidOperationError(f"a matrix' power must be an integer, got {n!r}")
@@ -179,15 +178,15 @@ class Matrix:
         # Check for a square matrix
         if not _is_square(self.dimensions):
             raise NotSquareError(f"to raise a matrix to a power, the matrix must be a squared matrix, got {self.dimensions}")
-        
+
         # Negative powers
         if n < 0:
             raise NotImplementedError
-        
+
         # Return the identity matrix when n is 0
         elif n == 0:
             return self.identity(self.dimensions[0])
-        
+
         result = Matrix(self.data)  # make a copy of the matrix
         for _ in range(n-1):
             result @= self

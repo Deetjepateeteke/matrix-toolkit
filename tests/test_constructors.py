@@ -82,15 +82,15 @@ def test_invalid_identity(n):
 
 @pytest.mark.parametrize(("A", "B"), [
     (
-        Matrix.full((1, 1), 1),
+        Matrix.full(1, (1, 1)),
         Matrix([[1]])
     ),
     (
-        Matrix.full((3, 2), 5),
+        Matrix.full(5, (3, 2)),
         Matrix([[5, 5], [5, 5], [5, 5]])
     ),
     (
-        Matrix.full((2, 3), -1),
+        Matrix.full(-1, (2, 3)),
         Matrix([[-1, -1, -1], [-1, -1, -1]])
     )
 ])
@@ -101,7 +101,7 @@ def test_full(A, B):
 @pytest.mark.parametrize("dimensions", [(-1, 2), (2, -1), (0, 0)])
 def test_invalid_full(dimensions):
     with raises(DimensionError):
-        Matrix.full(dimensions, 1)
+        Matrix.full(1, dimensions)
 
 
 @pytest.mark.parametrize(("A", "B"), [
