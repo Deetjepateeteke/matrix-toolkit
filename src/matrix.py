@@ -13,8 +13,9 @@ Author: Deetjepateeteke <https://github.com/Deetjepateeteke>
 """
 
 from __future__ import annotations
+import numpy as np
 
-from typing import Any, NoReturn, Union
+from typing import Any, NoReturn, Optional, Union
 
 from .utils import _is_square, _valid_dimensions
 from .errors import DimensionError, InvalidOperationError, NotSquareError
@@ -27,8 +28,14 @@ class Matrix:
 
     __slots__ = ["_data", "_dimensions"]
 
-    def __init__(self, data: list[list[float]]):
+    def __init__(self, data: Union[list[list[float]], np.ndarray]):
+
+        # When given a np.ndarray, convert it to a list
+        if isinstance(data, np.ndarray):
+            data = data.tolist()
+
         if _valid_dimensions(data):
+
             self._data = data
             self._dimensions = (len(data), len(data[0]))
 
@@ -87,7 +94,7 @@ class Matrix:
             )
 
         return Matrix([
-            [j1 + j2 for j1, j2 in zip(i1, i2)] for i1, i2 in zip(self.data, other.data)
+            [j1 + j2 for j1, j2 in zip(i1, i2)] for i1, i2 in zip(self._data, other._data)
         ])
 
     def __sub__(self, other: Matrix) -> Matrix:
@@ -101,7 +108,7 @@ class Matrix:
             )
 
         return Matrix([
-            [j1 - j2 for j1, j2 in zip(i1, i2)] for i1, i2 in zip(self.data, other.data)
+            [j1 - j2 for j1, j2 in zip(i1, i2)] for i1, i2 in zip(self._data, other._data)
         ])
 
     def __mul__(self, other: Union[int, float]) -> Matrix:
@@ -111,7 +118,7 @@ class Matrix:
             raise InvalidOperationError("use the @-operator to use matrix multiplication")
 
         return Matrix([
-            [other * j for j in i] for i in self.data
+            [other * j for j in i] for i in self._data
         ])
 
     def __rmul__(self, other: Union[int, float]) -> Matrix:
@@ -143,8 +150,8 @@ class Matrix:
             result.append([])
 
             for j in range(p):
-                own_row = self.data[i]  # The left matrix' ith rown
-                other_column = [other.data[c][j] for c in range(n)]  # The right matrix' jth column
+                own_row = self._data[i]  # The left matrix' ith rown
+                other_column = [other._data[c][j] for c in range(n)]  # The right matrix' jth column
 
                 result[i].append(sum(e1 * e2 for e1, e2 in zip(own_row, other_column)))
 
@@ -157,7 +164,7 @@ class Matrix:
         # Scalar division
         if isinstance(other, (int, float)):
             return Matrix([
-                [j / other for j in i] for i in self.data
+                [j / other for j in i] for i in self._data
             ])
 
         raise NotImplementedError
@@ -187,7 +194,7 @@ class Matrix:
         elif n == 0:
             return self.identity(self.dimensions[0])
 
-        result = Matrix(self.data)  # make a copy of the matrix
+        result = Matrix(self._data)  # make a copy of the matrix
         for _ in range(n-1):
             result @= self
 
@@ -202,7 +209,7 @@ class Matrix:
             return False
 
         # See if the corresponding elements are equal
-        for i1, i2 in zip(self.data, other.data):
+        for i1, i2 in zip(self._data, other._data):
             for j1, j2 in zip(i1, i2):
 
                 if j1 != j2:
@@ -213,34 +220,51 @@ class Matrix:
     def __ne__(self, other: Any) -> bool:
         return not self.__eq__(other)
 
+    def __array__(self, dtype: Optional[str] = None, copy: Optional[bool] = None) -> np.ndarray:
+        # Allow numpy integration
+        return np.array(self._data, dtype=dtype, copy=copy)
+
     def __str__(self) -> str:
-        return str(self.data)
+        return str(self._data)
 
     def __repr__(self) -> str:
-        return f"{type(self).__name__}(dims={self.dimensions}, {self.data})"
+        return f"{type(self).__name__}(dims={self.dimensions}, {self._data})"
 
     def transpose(self) -> Matrix:
         """
         Returns the transposed of a matrix. The transposed
          matrix will be of dimensions n x m.
 
-        returns:
+        Returns:
             Matrix: the transposed matrix
         """
         n = self.dimensions[1]
         m = self.dimensions[0]
 
         return Matrix([
-            [self.data[j][i] for j in range(m)] for i in range(n)
+            [self._data[j][i] for j in range(m)] for i in range(n)
         ])
 
-    @property
-    def data(self) -> list[list[Union[int, float]]]:
+    def to_list(self) -> list[list[float]]:
+        """
+        Convert the matrix into a 2-dimensional Python list.
+
+        Returns:
+            list[list[float]]: a 2-dimensional Python list
+        """
         return self._data
 
-    @data.setter
-    def data(self, _) -> NoReturn:
-        raise AttributeError("Matrix.data cannot be modified")
+    def to_numpy(self, dtype: Optional[str] = None) -> np.ndarray:
+        """
+        Convert the matrix into a numpy array.
+
+        Args:
+            dtype (Optional[str]): The dtype of the numpy array.
+
+        Returns:
+            np.ndarray: a 2-dimensional numpy array
+        """
+        return np.array(self._data, dtype=dtype)
 
     @property
     def dimensions(self) -> tuple[int]:

@@ -1,5 +1,8 @@
 # Matrix-toolkit
 
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+![Version](https://img.shields.io/badge/version-0.1.1-blue.svg)
+
 Matrix-toolkit is a Python add-on that introduces a 2-dimensional matrix datatype to the Python ecosystem, with native support for mathematical operations.
 
 ## Install
@@ -16,7 +19,7 @@ cd matrixtoolkit
 - 2D matrix datatype
 - Operator overloading (`+`, `-`, `*`, `/`, `@`, `**`, etc.)
 - Matrix creation utilities (identity, zero, etc.)
-- Pure Python, no external dependencies
+- Interoperability with Python and NumPy
 
 ## Usage
 
@@ -56,10 +59,18 @@ To create matrices, use the following methods:
 | Matrix.zeros(dimensions)       | Create a m x n matrix filled with zeros.           |
 | Matrix.full(value, dimensions) | Create a m x n matrix filled with the given value. |
 
+## Interoperability
+
+Matrix instances can be converted to and from Python and NumPy data structures.
+
+- Matrix.to_list()
+- Matrix.to_numpy()
+- np.array(Matrix)
+
 ## Links
 
 - Source Code: https://github.com/Deetjepateeteke/matrix-toolkit/
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE)
+This project is licensed under the [MIT License](LICENSE).
