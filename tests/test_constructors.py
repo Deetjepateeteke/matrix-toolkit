@@ -73,6 +73,12 @@ def test_transpose(A, B):
 def test_identity(A, B):
     assert A == B
 
+    # The identity matrix is a neutral element in matrix multiplication
+    C = Matrix.full(2, (A.dimensions))
+
+    assert A @ C == C
+    assert C @ A == C
+
 
 @pytest.mark.parametrize("n", [0, -1])
 def test_invalid_identity(n):
@@ -116,3 +122,4 @@ def test_invalid_full(dimensions):
 ])
 def test_zeros(A, B):
     assert A == B
+    assert 2 * A == A

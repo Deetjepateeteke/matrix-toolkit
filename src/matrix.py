@@ -249,3 +249,19 @@ class Matrix:
     @dimensions.setter
     def dimensions(self, _) -> NoReturn:
         raise AttributeError("Matrix.dimensions cannot be modified")
+
+    @property
+    def rows(self) -> int:
+        return self._dimensions[0]
+
+    @rows.setter
+    def rows(self, _) -> NoReturn:
+        raise AttributeError("Matrix.rows cannot be modified")
+
+    @property
+    def columns(self) -> int:
+        return self._dimensions[1]
+
+    @columns.setter
+    def columns(self, _) -> NoReturn:
+        raise AttributeError("Matrix.columns cannot be modified")

@@ -27,7 +27,7 @@ A = Matrix([[1, 0], [0, 1]])
 
 A.dimensions  # (2, 2)
 
-B = A.transpose()  # Compute a matrix' transpose
+T = A.transpose()  # Compute a matrix' transpose
 ```
 
 ## Supported Operations
