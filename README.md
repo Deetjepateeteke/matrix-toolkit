@@ -63,9 +63,9 @@ To create matrices, use the following methods:
 
 Matrix instances can be converted to and from Python and NumPy data structures.
 
-- Matrix.to_list()
-- Matrix.to_numpy()
-- np.array(Matrix)
+- `Matrix.to_list()`
+- `Matrix.to_numpy()`
+- `np.array(Matrix)`
 
 ## Links
 
